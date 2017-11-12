@@ -1,8 +1,8 @@
 package org.sert2521.bunnybots.driving
 
 import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
-import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
+import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sert2521.bunnybots.util.rightJoystick
@@ -18,10 +18,10 @@ import org.strongback.drive.TankDrive as Drive
 val drive = Drive(
         Motor.compose(
                 Hardware.Motors.talonSRX(LEFT_FRONT_MOTOR),
-                Hardware.Motors.talonSRX(RIGHT_FRONT_MOTOR)
+                Hardware.Motors.talonSRX(LEFT_REAR_MOTOR)
         ),
         Motor.compose(
-                Hardware.Motors.talonSRX(LEFT_REAR_MOTOR),
+                Hardware.Motors.talonSRX(RIGHT_FRONT_MOTOR),
                 Hardware.Motors.talonSRX(RIGHT_REAR_MOTOR)
         )
 )
