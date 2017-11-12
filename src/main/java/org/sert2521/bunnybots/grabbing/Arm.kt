@@ -2,7 +2,7 @@ package org.sert2521.bunnybots.grabbing
 
 import edu.wpi.first.smartdashboard.gui.elements.Command
 
-class Arm(
+class Grab(
         private val arm: Arm
 ) : Command(grab) {
     override fun execute(): Boolean {
