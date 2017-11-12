@@ -4,7 +4,7 @@ import edu.wpi.first.smartdashboard.gui.elements.Command
 
 class Grab(
         private val arm: Arm
-) : Command(grab) {
+) : Command() {
     override fun execute(): Boolean {
         grab(trigger.read())
         return false
