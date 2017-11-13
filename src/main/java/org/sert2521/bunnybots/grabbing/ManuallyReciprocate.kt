@@ -1,15 +1,14 @@
 package org.sert2521.bunnybots.grabbing
 
+import org.sert2521.bunnybots.util.rightJoystick
 import org.strongback.command.Command
-import org.strongback.components.Motor
+import org.strongback.control.TalonController
 
-class ManuallyReciprocate(
-        private val arm: Motor
-) : Command(arm) {
+class ManuallyReciprocate(arm: Set<TalonController>) : Command(*arm.toTypedArray()) {
     override fun execute(): Boolean {
-        arm.speed = 0.5 // TODO
+        setArmAngle(rightJoystick.throttle.read())
         return false
     }
 
-    override fun end() = arm.stop()
+    override fun end() = setArmAngle(0.0)
 }
