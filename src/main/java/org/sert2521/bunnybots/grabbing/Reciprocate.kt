@@ -2,7 +2,6 @@ package org.sert2521.bunnybots.grabbing
 
 import org.strongback.command.Command
 import org.strongback.components.Motor
-import org.strongback.components.Switch
 
 class Reciprocate(
         private val arm: Motor
