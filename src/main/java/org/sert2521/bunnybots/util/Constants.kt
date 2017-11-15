@@ -15,4 +15,3 @@ const val LEFT_ARM_MOTOR = 15
 // Pneumatics
 const val SOLENOID_EXTEND = 1
 const val SOLENOID_RETRACT = 2
-
