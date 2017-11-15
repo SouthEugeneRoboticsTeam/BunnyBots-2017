@@ -14,7 +14,7 @@ private val armMotors = setOf(rightArmMotor, leftArmMotor)
 
 fun initArm() {
     Strongback.switchReactor().onTriggeredLifecycleSubmit(rightJoystick.getButton(11), Supplier {
-        ManuallyReciprocate(armMotors)
+        Move(armMotors)
     })
 }
 
