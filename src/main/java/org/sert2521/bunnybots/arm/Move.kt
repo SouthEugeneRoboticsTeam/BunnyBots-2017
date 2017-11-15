@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.grabbing
+package org.sert2521.bunnybots.arm
 
 import org.sert2521.bunnybots.util.rightJoystick
 import org.strongback.command.Command

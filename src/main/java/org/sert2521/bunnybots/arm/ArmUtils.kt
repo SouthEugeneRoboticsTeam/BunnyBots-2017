@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.grabbing
+package org.sert2521.bunnybots.arm
 
 import org.sert2521.bunnybots.util.LEFT_ARM_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_ARM_MOTOR
