@@ -43,11 +43,10 @@ class TankDriveTest {
 
         val tester = CommandTester(TankDrive(drive, leftStick.continuous, rightStick.continuous))
 
-        var speed: Double
-
         // Make sure the motors are not moving when the test begins
 
-        speed = 0.0
+        var speed = 0.0
+
         leftStick.value = speed
         rightStick.value = speed
 
