@@ -31,5 +31,6 @@ class Robot : IterativeRobot() {
     private fun init() {
         Strongback.start()
         initDrivetrain()
+        initGrab()
     }
 }
