@@ -9,5 +9,7 @@ class Grab(private val claw: Solenoid) : Command() {
         return false
     }
 
-    override fun end() { claw.retract() }
+    override fun end() {
+        claw.retract()
+    }
 }
