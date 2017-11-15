@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.driving
+package org.sert2521.bunnybots.drivetrain
 
 import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
