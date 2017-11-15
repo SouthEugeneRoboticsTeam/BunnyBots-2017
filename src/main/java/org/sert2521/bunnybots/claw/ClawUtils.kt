@@ -18,5 +18,3 @@ fun initClaw() {
         })
     }
 }
-
-// onTriggeredLifeCycle
