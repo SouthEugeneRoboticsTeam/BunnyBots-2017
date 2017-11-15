@@ -7,6 +7,8 @@ import org.strongback.Strongback
 import org.strongback.components.Solenoid
 import org.strongback.hardware.Hardware
 import java.util.function.Supplier
+import org.sert2521.bunnybots.util.SOLENOID_EXTEND
+import org.sert2521.bunnybots.util.SOLENOID_RETRACT
 
 private val claw = Hardware.Solenoids.doubleSolenoid(0, 0, Solenoid.Direction.RETRACTING)
 
