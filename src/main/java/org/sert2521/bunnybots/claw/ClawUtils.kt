@@ -11,7 +11,7 @@ import org.sert2521.bunnybots.util.SOLENOID_RETRACT
 
 private val claw = Hardware.Solenoids.doubleSolenoid(SOLENOID_EXTEND, SOLENOID_RETRACT, Solenoid.Direction.RETRACTING)
 
-fun initGrab() {
+fun initClaw() {
     Strongback.switchReactor().apply {
         onTriggeredLifecycleSubmit(leftJoystick.trigger, Supplier {
             Grab(claw)
