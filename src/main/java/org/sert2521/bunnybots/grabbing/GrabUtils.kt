@@ -9,7 +9,7 @@ import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
 
-private val grab = Hardware.Solenoids.doubleSolenoid(0, 0, Solenoid.Direction.RETRACTING)
+private val claw = Hardware.Solenoids.doubleSolenoid(0, 0, Solenoid.Direction.RETRACTING)
 
 fun initGrab() {
     Strongback.switchReactor().apply {
