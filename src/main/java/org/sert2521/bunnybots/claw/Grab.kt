@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.grabbing
+package org.sert2521.bunnybots.claw
 
 import org.strongback.command.Command
 import org.strongback.components.Solenoid

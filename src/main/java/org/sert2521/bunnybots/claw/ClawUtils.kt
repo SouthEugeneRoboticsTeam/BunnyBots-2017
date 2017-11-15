@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.grabbing
+package org.sert2521.bunnybots.claw
 
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sert2521.bunnybots.util.onTriggeredLifecycleSubmit
