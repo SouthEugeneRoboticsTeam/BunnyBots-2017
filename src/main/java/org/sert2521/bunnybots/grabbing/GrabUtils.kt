@@ -10,7 +10,7 @@ import java.util.function.Supplier
 import org.sert2521.bunnybots.util.SOLENOID_EXTEND
 import org.sert2521.bunnybots.util.SOLENOID_RETRACT
 
-private val claw = Hardware.Solenoids.doubleSolenoid(0, 0, Solenoid.Direction.RETRACTING)
+private val claw = Hardware.Solenoids.doubleSolenoid(SOLENOID_EXTEND, SOLENOID_RETRACT, Solenoid.Direction.RETRACTING)
 
 fun initGrab() {
     Strongback.switchReactor().apply {
