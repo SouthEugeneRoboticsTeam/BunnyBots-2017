@@ -4,7 +4,6 @@ import org.junit.Before
 import org.junit.Test
 import org.sert2521.bunnybots.ContinuousRangeTester
 import org.sert2521.bunnybots.assertMotorSpeeds
-import org.sert2521.bunnybots.driving.TankDrive
 import org.strongback.command.CommandTester
 import org.strongback.components.Motor
 import org.strongback.mock.Mock

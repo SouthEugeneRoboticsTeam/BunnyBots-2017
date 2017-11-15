@@ -1,19 +1,19 @@
-package org.sert2521.bunnybots.driving
+package org.sert2521.bunnybots.drivetrain
 
 import org.strongback.command.Command
 import org.strongback.components.ui.ContinuousRange
 import org.strongback.drive.TankDrive
 
 /**
- * This command allows for arcade drive of the robot.
+ * This command allows for tank drive of the robot.
  */
-class ArcadeDrive(
+class TankDrive(
         private val drive: TankDrive,
-        private val pitch: ContinuousRange,
-        private val roll: ContinuousRange
+        private val left: ContinuousRange,
+        private val right: ContinuousRange
 ) : Command(drive) {
     override fun execute(): Boolean {
-        drive.arcade(pitch.read(), roll.read())
+        drive.tank(left.read(), right.read())
         return false
     }
 
