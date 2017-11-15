@@ -3,6 +3,7 @@ package org.sert2521.bunnybots
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import org.sert2521.bunnybots.driving.initDrivetrain
+import org.sert2521.bunnybots.claw.initClaw
 import org.sert2521.bunnybots.arm.initArm
 import org.strongback.Strongback
 
@@ -32,6 +33,7 @@ class Robot : IterativeRobot() {
     private fun init() {
         Strongback.start()
         initDrivetrain()
+        initClaw()
         initArm()
     }
 }
