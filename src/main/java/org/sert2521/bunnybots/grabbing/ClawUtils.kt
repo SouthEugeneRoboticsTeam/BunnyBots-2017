@@ -1,6 +1,5 @@
-package org.sert2521.bunnybots.driving
+package org.sert2521.bunnybots.grabbing
 
-import org.sert2521.bunnybots.grabbing.Grab
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sert2521.bunnybots.util.onTriggeredLifecycleSubmit
 import org.strongback.Strongback
