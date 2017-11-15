@@ -12,3 +12,6 @@ const val LEFT_REAR_MOTOR = 13
 const val RIGHT_ARM_MOTOR = 14
 const val LEFT_ARM_MOTOR = 15
 
+// Pneumatics
+const val SOLENOID = 16
+
