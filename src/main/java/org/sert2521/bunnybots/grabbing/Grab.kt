@@ -1,2 +1,7 @@
+import org.strongback.command.Command
 
-class Grab()
+class Grab() : Command() {
+    override fun execute(): Boolean {
+        return false
+    }
+}
