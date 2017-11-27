@@ -11,6 +11,6 @@ val rightJoystick: FlightStick = Hardware.HumanInterfaceDevices.logitechAttack3D
 val FlightStick.scaledThrottle: ContinuousRange
     get() = throttle.invert().map { (it + 1) * .5 }
 val FlightStick.scaledPitch: ContinuousRange
-    get() = pitch.scale(Preferences.getInstance().getDouble("scaled_speed", 1.0))
+    get() = pitch.scale(Preferences.getInstance().getDouble("speed_scalar", 1.0))
 val FlightStick.scaledRoll: ContinuousRange
-    get() = roll.scale(Preferences.getInstance().getDouble("scaled_speed", 1.0))
+    get() = roll.scale(Preferences.getInstance().getDouble("speed_scalar", 1.0))

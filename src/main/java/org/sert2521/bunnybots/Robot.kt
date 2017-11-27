@@ -2,9 +2,9 @@ package org.sert2521.bunnybots
 
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
-import org.sert2521.bunnybots.drivetrain.initDrivetrain
-import org.sert2521.bunnybots.claw.initClaw
 import org.sert2521.bunnybots.arm.initArm
+import org.sert2521.bunnybots.claw.initClaw
+import org.sert2521.bunnybots.drivetrain.initDrivetrain
 import org.strongback.Strongback
 
 /**

@@ -19,7 +19,7 @@ private val drive = Drive(
         Motor.compose(
                 Hardware.Motors.talonSRX(LEFT_FRONT_MOTOR),
                 Hardware.Motors.talonSRX(LEFT_REAR_MOTOR)
-        ),
+        ).invert(),
         Motor.compose(
                 Hardware.Motors.talonSRX(RIGHT_FRONT_MOTOR),
                 Hardware.Motors.talonSRX(RIGHT_REAR_MOTOR)
