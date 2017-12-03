@@ -11,32 +11,29 @@ import org.strongback.control.TalonController
 import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
-private val rightArmMotor = Hardware.Controllers.talonController(RIGHT_ARM_MOTOR, 0.1, 0.0).apply {
+private val rightArmTalon = CANTalon(RIGHT_ARM_MOTOR)
+private val rightArmMotor = Hardware.Controllers.talonController(rightArmTalon, 0.1, 0.0).apply {
     withGains(0.1, 0.1, 0.1)
     setFeedbackDevice(TalonSRX.FeedbackDevice.ANALOG_ENCODER)
     controlMode = TalonController.ControlMode.POSITION
 }
-private val rightArmTalon = rightArmMotor.canTalon
-private val leftArmMotor = Hardware.Controllers.talonController(LEFT_ARM_MOTOR, 0.1, 0.0).apply {
+private val leftArmTalon = CANTalon(LEFT_ARM_MOTOR)
+private val leftArmMotor = Hardware.Controllers.talonController(leftArmTalon, 0.1, 0.0).apply {
     withGains(0.1, 0.1, 0.1)
     setFeedbackDevice(TalonSRX.FeedbackDevice.ANALOG_ENCODER)
     controlMode = TalonController.ControlMode.POSITION
 }
-private val leftArmTalon = leftArmMotor.canTalon
 private val armMotors = setOf(rightArmMotor, leftArmMotor)
 
 fun initArm() {
     Strongback.switchReactor().onTriggeredLifecycleSubmit(rightJoystick.getButton(11), Supplier {
         Move(armMotors)
     })
+
+
 }
 
 fun setArmAngle(angle: Double) {
-    leftArmTalon.setpoint = angle
-    rightArmTalon.setpoint = angle
+//    leftArmTalon.setpoint = angle
+//    rightArmTalon.setpoint = angle
 }
-
-private val TalonController.canTalon: CANTalon
-    get() = this::class.java.superclass.getDeclaredField("talon").apply {
-        isAccessible = true
-    }.get(this) as CANTalon

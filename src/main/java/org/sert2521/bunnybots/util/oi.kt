@@ -7,6 +7,8 @@ import org.strongback.hardware.Hardware
 
 val leftJoystick: FlightStick = Hardware.HumanInterfaceDevices.logitechAttack3D(LEFT_STICK_PORT)
 val rightJoystick: FlightStick = Hardware.HumanInterfaceDevices.logitechAttack3D(RIGHT_STICK_PORT)
+val frontSwitch = Hardware.Switches.normallyClosed(0)
+val rearSwitch = Hardware.Switches.normallyClosed(1)
 
 val FlightStick.scaledThrottle: ContinuousRange
     get() = throttle.invert().map { (it + 1) * .5 }
