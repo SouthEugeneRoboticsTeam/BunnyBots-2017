@@ -1,12 +1,13 @@
 package org.sert2521.bunnybots.arm
 
 import org.sert2521.bunnybots.util.rightJoystick
+import org.sert2521.bunnybots.util.scaledThrottle
 import org.strongback.command.Command
 import org.strongback.control.TalonController
 
 class Move(arm: Set<TalonController>) : Command(*arm.toTypedArray()) {
     override fun execute(): Boolean {
-        setArmAngle(rightJoystick.throttle.read())
+        setArmAngle(rightJoystick.scaledThrottle.read())
         return false
     }
 
