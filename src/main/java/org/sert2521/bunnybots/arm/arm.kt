@@ -12,38 +12,45 @@ import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
 private val leftArmTalon = CANTalon(LEFT_ARM_MOTOR)
-private val leftArmMotor = Hardware.Controllers.talonController(leftArmTalon, 0.1, 0.0).apply {
-    withGains(0.0005, 0.0005, 0.0005)
+private val leftArmMotor = Hardware.Controllers.talonController(leftArmTalon, 11.3777777778, 0.0).apply {
     setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
-    controlMode = TalonController.ControlMode.POSITION
+    withGains(0.01, 0.0, 0.0)
 }
-private val rightArmTalon = CANTalon(RIGHT_ARM_MOTOR).apply {
-    follow(leftArmTalon)
-}
-private val rightArmMotor = Hardware.Controllers.talonController(rightArmTalon, 0.1, 0.0)
-private val armMotors = setOf(leftArmMotor, rightArmMotor)
-
-private val defaultCommand = ManualMove(armMotors, leftArmTalon)
+private val defaultCommand = ManualMove(leftArmMotor, leftArmTalon)
 
 fun initArm() {
-    leftArmTalon.softReset()
+    CANTalon(RIGHT_ARM_MOTOR).follow(leftArmTalon)
     Strongback.switchReactor().onTriggeredLifecycleSubmit(rightJoystick.getButton(11), Supplier {
-        Move(armMotors, leftArmTalon)
+        Move(leftArmMotor, leftArmTalon)
     }, Supplier { defaultCommand })
 }
 
 fun addArmCommands() {
+//    Strongback.executor().register(
+//            SoftwarePIDController(
+//                    SoftwarePIDController.SourceType.DISTANCE,
+//                    DoubleSupplier { leftArmTalon.pulseWidthPosition.toDouble() },
+//                    DoubleConsumer { leftArmTalon.set(it) }
+//            ).executable(),
+//            Executor.Priority.HIGH
+//    )
+    leftArmTalon.softReset()
     Strongback.submit(defaultCommand)
 }
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-    Strongback.logger().info(leftArmTalon.encPosition.toString())
-    leftArmMotor.withTarget(60.0)
+    Strongback.logger().info("2 " + leftArmTalon.encPosition.toString())
+    Strongback.logger().info("3 " + leftArmTalon.pulseWidthPosition.toString())
+    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
+    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
+    leftArmTalon.set(200.0)
+//    leftArmMotor.withTarget(237.0)
 }
 
 fun setArmSpeed(speed: Double) {
-    leftArmMotor.speed = speed * 0.275
+    leftArmMotor.controlMode = TalonController.ControlMode.PERCENT_VBUS
+    leftArmMotor.speed = speed * 0.3
 }
 
 fun CANTalon.softReset() {
