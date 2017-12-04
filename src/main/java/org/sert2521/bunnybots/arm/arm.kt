@@ -43,7 +43,7 @@ fun setArmAngle(angle: Double) {
 }
 
 fun setArmSpeed(speed: Double) {
-    leftArmMotor.speed = speed * 0.2
+    leftArmMotor.speed = speed * 0.275
 }
 
 fun CANTalon.softReset() {
