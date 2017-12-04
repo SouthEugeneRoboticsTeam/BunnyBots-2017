@@ -11,29 +11,42 @@ import org.strongback.control.TalonController
 import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
-private val rightArmTalon = CANTalon(RIGHT_ARM_MOTOR)
-private val rightArmMotor = Hardware.Controllers.talonController(rightArmTalon, 0.1, 0.0).apply {
-    withGains(0.1, 0.1, 0.1)
-    setFeedbackDevice(TalonSRX.FeedbackDevice.ANALOG_ENCODER)
-    controlMode = TalonController.ControlMode.POSITION
-}
 private val leftArmTalon = CANTalon(LEFT_ARM_MOTOR)
 private val leftArmMotor = Hardware.Controllers.talonController(leftArmTalon, 0.1, 0.0).apply {
-    withGains(0.1, 0.1, 0.1)
-    setFeedbackDevice(TalonSRX.FeedbackDevice.ANALOG_ENCODER)
+    withGains(0.0005, 0.0005, 0.0005)
+    setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
     controlMode = TalonController.ControlMode.POSITION
 }
-private val armMotors = setOf(rightArmMotor, leftArmMotor)
+private val rightArmTalon = CANTalon(RIGHT_ARM_MOTOR).apply {
+    follow(leftArmTalon)
+}
+private val rightArmMotor = Hardware.Controllers.talonController(rightArmTalon, 0.1, 0.0)
+private val armMotors = setOf(leftArmMotor, rightArmMotor)
+
+private val defaultCommand = ManualMove(armMotors, leftArmTalon)
 
 fun initArm() {
+    leftArmTalon.softReset()
     Strongback.switchReactor().onTriggeredLifecycleSubmit(rightJoystick.getButton(11), Supplier {
-        Move(armMotors)
-    })
+        Move(armMotors, leftArmTalon)
+    }, Supplier { defaultCommand })
+}
 
-
+fun addArmCommands() {
+    Strongback.submit(defaultCommand)
 }
 
 fun setArmAngle(angle: Double) {
-//    leftArmTalon.setpoint = angle
-//    rightArmTalon.setpoint = angle
+    // 1409..-1171 to 3931..1350
+    Strongback.logger().info(leftArmTalon.encPosition.toString())
+    leftArmMotor.withTarget(60.0)
+}
+
+fun setArmSpeed(speed: Double) {
+    leftArmMotor.speed = speed * 0.2
+}
+
+fun CANTalon.softReset() {
+    reset()
+    enable()
 }

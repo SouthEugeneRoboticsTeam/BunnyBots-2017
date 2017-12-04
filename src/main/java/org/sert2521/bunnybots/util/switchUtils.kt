@@ -28,19 +28,24 @@ fun SwitchReactor.whileTriggeredSubmit(switch: Switch, supplier: Supplier<Comman
 
 fun SwitchReactor.onTriggeredLifecycleSubmit(
         switch: Switch,
-        supplier: Supplier<Command>
+        activeCommandSupplier: Supplier<Command>,
+        inactiveCommandSupplier: Supplier<Command>? = null
 ) = onTriggeredSubmit(switch, object : Supplier<Command> {
     private val cancelRequirable = object : Requirable {}
     private val isRunning = AtomicBoolean()
     private val requirements: Set<Requirable> =
-            supplier.get().requirements.toMutableSet().apply {
+            activeCommandSupplier.get().requirements.toMutableSet().apply {
                 add(cancelRequirable)
             }
 
     override fun get(): Command = if (isRunning.getAndSet(!isRunning.get())) {
-        Command.cancel(cancelRequirable)
+        if (inactiveCommandSupplier == null) {
+            Command.cancel(cancelRequirable)
+        } else {
+            CommandWrapper(inactiveCommandSupplier.get(), overrideRequirements = requirements)
+        }
     } else {
-        CommandWrapper(supplier.get(), overrideRequirements = requirements)
+        CommandWrapper(activeCommandSupplier.get(), overrideRequirements = requirements)
     }
 })
 

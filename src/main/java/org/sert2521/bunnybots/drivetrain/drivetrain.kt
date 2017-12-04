@@ -28,7 +28,6 @@ private val defaultDrive: Command
     get() = ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
 
 fun initDrivetrain() {
-    Strongback.submit(defaultDrive)
     Strongback.switchReactor().apply {
         onTriggeredSubmit(rightJoystick.thumb, Supplier {
             ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
@@ -37,4 +36,8 @@ fun initDrivetrain() {
             TankDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledPitch)
         })
     }
+}
+
+fun addDrivetrainCommands() {
+    Strongback.submit(defaultDrive)
 }
