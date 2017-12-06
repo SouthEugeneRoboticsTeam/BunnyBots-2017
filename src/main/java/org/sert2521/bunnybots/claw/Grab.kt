@@ -4,7 +4,7 @@ import org.strongback.Strongback
 import org.strongback.command.Command
 import org.strongback.components.Solenoid
 
-class Grab(private val claw: Solenoid) : Command() {
+class Grab(private val claw: Solenoid) : Command(claw) {
     override fun initialize() {
         Strongback.logger().info("Extending")
         claw.extend()
