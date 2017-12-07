@@ -3,6 +3,7 @@ package org.sert2521.bunnybots.arm
 import com.ctre.MotorControl.CANTalon
 import org.sert2521.bunnybots.util.LEFT_ARM_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_ARM_MOTOR
+import org.sert2521.bunnybots.util.frontSwitch
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sert2521.bunnybots.util.onTriggeredLifecycleSubmit
 import org.sert2521.bunnybots.util.rightJoystick
@@ -11,6 +12,7 @@ import org.strongback.Strongback
 import org.strongback.command.CommandGroup
 import org.strongback.components.Switch
 import org.strongback.components.TalonSRX
+import org.strongback.control.TalonController
 import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
@@ -37,6 +39,10 @@ fun initArm() {
                 )
             }
     )
+    Strongback.switchReactor().onTriggered(frontSwitch, Runnable {
+        Strongback.logger().info("Boom!")
+        leftArmTalon.encPosition = 0
+    })
 }
 
 fun addArmCommands() {
@@ -54,12 +60,13 @@ fun addArmCommands() {
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-//    Strongback.logger().info("2 " + leftArmTalon.encPosition.toString())
-//    Strongback.logger().info("3 " + leftArmTalon.pulseWidthPosition.toString())
-//    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
-//    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
-//    leftArmTalon.set(200.0)
-//    leftArmMotor.withTarget(237.0)
+    Strongback.logger().info(leftArmTalon.encPosition.toString())
+    leftArmTalon.reverseSensor(true)
+    leftArmTalon.reverseOutput(true)
+    leftArmMotor.withGains(0.25, 0.0, 0.0)
+    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
+    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
+    leftArmTalon.set(1500.0)
 }
 
 fun setArmSpeed(speed: Double) {
