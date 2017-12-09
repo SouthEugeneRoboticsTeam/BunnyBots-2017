@@ -4,6 +4,8 @@ import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
+import org.sert2521.bunnybots.util.leftJoystick
+import org.sert2521.bunnybots.util.onTriggeredLifecycleSubmit
 import org.sert2521.bunnybots.util.rightJoystick
 import org.sert2521.bunnybots.util.scaledPitch
 import org.sert2521.bunnybots.util.scaledRoll
@@ -28,14 +30,13 @@ private val defaultDrive: Command
     get() = ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
 
 fun initDrivetrain() {
-    Strongback.switchReactor().apply {
-        onTriggeredSubmit(rightJoystick.thumb, Supplier {
-            ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
-        })
-        onTriggeredSubmit(rightJoystick.thumb, Supplier {
-            TankDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledPitch)
-        })
-    }
+    Strongback.switchReactor().onTriggeredLifecycleSubmit(
+            leftJoystick.getButton(9),
+            Supplier { defaultDrive },
+            Supplier {
+                TankDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledPitch)
+            }
+    )
 }
 
 fun addDrivetrainCommands() {

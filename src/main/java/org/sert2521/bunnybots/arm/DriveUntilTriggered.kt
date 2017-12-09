@@ -13,11 +13,11 @@ class DriveUntilTriggered(private val bucketTrigger: Switch) : Command(drive) {
     private var hasArmHitBottom = false
 
     override fun initialize() {
-        drive.tank(speed * 2, speed * 2 + 0.025)
+        drive.tank(speed * 2, speed * 2 + 0.027)
     }
 
     override fun execute(): Boolean {
-        if (counter++ > 100) drive.tank(speed, speed + 0.05)
+        if (counter++ > 100) drive.tank(speed, speed + 0.049)
         if (!hasArmHitBottom) counterWhenArmIsDown = counter
         return ((counter - counterWhenArmIsDown >= 50) and bucketTrigger.isTriggered and frontSwitch.isTriggered.apply {
             if (!hasArmHitBottom) hasArmHitBottom = this

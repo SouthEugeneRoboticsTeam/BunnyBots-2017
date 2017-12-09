@@ -51,7 +51,7 @@ class Robot : IterativeRobot() {
                 },
                 object : Command(leftArmMotor) {
                     override fun execute(): Boolean {
-                        setArmSpeed(-0.175)
+                        setArmSpeed(-0.176)
                         return false
                     }
                 }

@@ -12,7 +12,6 @@ import org.strongback.Strongback
 import org.strongback.command.CommandGroup
 import org.strongback.components.Switch
 import org.strongback.components.TalonSRX
-import org.strongback.control.TalonController
 import org.strongback.hardware.Hardware
 import java.util.function.Supplier
 
@@ -60,13 +59,13 @@ fun addArmCommands() {
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-    Strongback.logger().info(leftArmTalon.encPosition.toString())
-    leftArmTalon.reverseSensor(true)
-    leftArmTalon.reverseOutput(true)
-    leftArmMotor.withGains(0.25, 0.0, 0.0)
-    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
-    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
-    leftArmTalon.set(1500.0)
+//    Strongback.logger().info(leftArmTalon.encPosition.toString())
+//    leftArmTalon.reverseSensor(true)
+//    leftArmTalon.reverseOutput(true)
+//    leftArmMotor.withGains(0.25, 0.0, 0.0)
+//    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
+//    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
+//    leftArmTalon.set(1500.0)
 }
 
 fun setArmSpeed(speed: Double) {
