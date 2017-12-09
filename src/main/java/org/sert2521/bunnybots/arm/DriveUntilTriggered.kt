@@ -13,7 +13,7 @@ class DriveUntilTriggered(private val bucketTrigger: Switch) : Command(drive) {
     private var hasArmHitBottom = false
 
     override fun initialize() {
-        drive.tank(speed * 2, speed * 2 + 0.027)
+        drive.tank(speed * 2, speed * 2 + 0.0275)
     }
 
     override fun execute(): Boolean {
