@@ -14,7 +14,8 @@ import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
 typealias Talon = WPI_TalonSRX
 
 operator fun Talon.plus(other: Talon): Talon {
-    other.control = ControlMode.Follower
+    other.set(ControlMode.Follower, deviceID.toDouble())
+    return this
 }
 
 private val frontLeft = Talon(LEFT_FRONT_MOTOR).apply {

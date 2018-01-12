@@ -13,12 +13,6 @@ import jaci.pathfinder.modifiers.TankModifier
 import org.sert2521.bunnybots.arm.addArmCommands
 import org.sert2521.bunnybots.drivetrain.addDrivetrainCommands
 
-
-
-
-
-
-
 /**
  * This is the main robot class which calls various methods depending on the current game stage.
  */
