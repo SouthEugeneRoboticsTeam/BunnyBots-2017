@@ -1,6 +1,6 @@
 package org.sert2521.bunnybots.arm
 
-import org.sert2521.bunnybots.drivetrain.Talon
+import org.sertain.hardware.Talon
 
 class Toss(talon: Talon) : TalonResetCommandBase(talon, 300.0) {
     private var counter = 0

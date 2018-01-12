@@ -1,11 +1,11 @@
 package org.sert2521.bunnybots.arm
 
-import org.sert2521.bunnybots.drivetrain.Talon
 import org.sert2521.bunnybots.util.LEFT_ARM_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_ARM_MOTOR
 import org.sert2521.bunnybots.util.frontSwitch
 import org.sert2521.bunnybots.util.rightJoystick
 import org.sert2521.bunnybots.util.tossSwitch
+import org.sertain.hardware.Talon
 
 private val leftArmTalon = Talon(LEFT_ARM_MOTOR)
 
