@@ -1,48 +1,31 @@
 package org.sert2521.bunnybots.arm
 
-import com.ctre.MotorControl.CANTalon
+import org.sert2521.bunnybots.drivetrain.Talon
 import org.sert2521.bunnybots.util.LEFT_ARM_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_ARM_MOTOR
 import org.sert2521.bunnybots.util.frontSwitch
-import org.sert2521.bunnybots.util.leftJoystick
-import org.sert2521.bunnybots.util.onTriggeredLifecycleSubmit
 import org.sert2521.bunnybots.util.rightJoystick
 import org.sert2521.bunnybots.util.tossSwitch
-import org.strongback.Strongback
-import org.strongback.command.CommandGroup
-import org.strongback.components.Switch
-import org.strongback.components.TalonSRX
-import org.strongback.control.TalonController
-import org.strongback.hardware.Hardware
-import java.util.function.Supplier
 
-private val leftArmTalon = CANTalon(LEFT_ARM_MOTOR)
-val leftArmMotor = Hardware.Controllers.talonController(leftArmTalon, 11.3777777778, 0.0).apply {
-    setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
-    withGains(0.01, 0.0, 0.0)
-}
-private val defaultCommand = ManualMove(leftArmMotor, leftArmTalon)
+private val leftArmTalon = Talon(LEFT_ARM_MOTOR)
+
+private val defaultCommand = ManualMove(leftArmTalon)
 
 fun initArm() {
-    CANTalon(RIGHT_ARM_MOTOR).follow(leftArmTalon)
-    Strongback.switchReactor().onTriggeredLifecycleSubmit(
-            Switch.or(leftJoystick.getButton(11), rightJoystick.getButton(11)),
-            Supplier { Move(leftArmMotor, leftArmTalon) },
-            Supplier { defaultCommand }
-    )
-    Strongback.switchReactor().onTriggeredSubmit(
-            tossSwitch,
-            Supplier {
-                CommandGroup.runSequentially(
-                        Toss(leftArmMotor, leftArmTalon),
-                        defaultCommand
-                )
-            }
-    )
-    Strongback.switchReactor().onTriggered(frontSwitch, Runnable {
-        Strongback.logger().info("Boom!")
-        leftArmTalon.encPosition = 0
-    })
+    Talon(RIGHT_ARM_MOTOR).follow(leftArmTalon)
+    if (rightJoystick.getRawButtonPressed(11)) {
+        Move(leftArmTalon)
+        defaultCommand
+    }
+
+    if (tossSwitch.get()) {
+        Toss(leftArmTalon)
+        defaultCommand
+    }
+
+    if (frontSwitch.get()) {
+        leftArmTalon.setSelectedSensorPosition(0, 0, 0)
+    }
 }
 
 fun addArmCommands() {
@@ -54,26 +37,14 @@ fun addArmCommands() {
 //            ).executable(),
 //            Executor.Priority.HIGH
 //    )
-    leftArmTalon.softReset()
-    Strongback.submit(defaultCommand)
+    leftArmTalon.stopMotor()
+    defaultCommand
 }
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-    Strongback.logger().info(leftArmTalon.encPosition.toString())
-    leftArmTalon.reverseSensor(true)
-    leftArmTalon.reverseOutput(true)
-    leftArmMotor.withGains(0.25, 0.0, 0.0)
-    leftArmMotor.setFeedbackDevice(TalonSRX.FeedbackDevice.QUADRATURE_ENCODER)
-    leftArmMotor.controlMode = TalonController.ControlMode.POSITION
-    leftArmTalon.set(1500.0)
+
 }
 
 fun setArmSpeed(speed: Double) {
-    leftArmMotor.speed = speed
-}
-
-fun CANTalon.softReset() {
-    reset()
-    enable()
 }

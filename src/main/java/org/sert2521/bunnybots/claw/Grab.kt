@@ -1,19 +1,18 @@
 package org.sert2521.bunnybots.claw
 
-import org.strongback.Strongback
-import org.strongback.command.Command
-import org.strongback.components.Solenoid
+import edu.wpi.first.wpilibj.DoubleSolenoid
+import edu.wpi.first.wpilibj.command.Command
 
-class Grab(private val claw: Solenoid) : Command(claw) {
+class Grab(private val claw: DoubleSolenoid) : Command() {
     override fun initialize() {
-        Strongback.logger().info("Extending")
-        claw.extend()
+        println("Extending")
+        claw.set(DoubleSolenoid.Value.kForward)
     }
 
-    override fun execute() = false
+    override fun isFinished() = false
 
     override fun end() {
-        Strongback.logger().info("Retracting")
-        claw.retract()
+        println("Retracting")
+        claw.set(DoubleSolenoid.Value.kReverse)
     }
 }

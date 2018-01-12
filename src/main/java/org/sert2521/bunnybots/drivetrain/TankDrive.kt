@@ -1,21 +1,22 @@
 package org.sert2521.bunnybots.drivetrain
 
-import org.strongback.command.Command
-import org.strongback.components.ui.ContinuousRange
-import org.strongback.drive.TankDrive
+import edu.wpi.first.wpilibj.command.Command
+import org.sert2521.bunnybots.util.leftJoystick
+import org.sert2521.bunnybots.util.rightJoystick
 
 /**
- * This command allows for tank drive of the robot.
+ * This command allows for arcade drive of the robot.
  */
-class TankDrive(
-        private val drive: TankDrive,
-        private val left: ContinuousRange,
-        private val right: ContinuousRange
-) : Command(drive) {
-    override fun execute(): Boolean {
-        drive.tank(left.read(), right.read())
-        return false
+class TankDrive : Command() {
+    override fun isFinished(): Boolean = false
+
+    override fun execute() {
+        frontDrive.tankDrive(leftJoystick.y, rightJoystick.y)
+        rearDrive.tankDrive(leftJoystick.y, rightJoystick.y)
     }
 
-    override fun end() = drive.stop()
+    override fun end() {
+        frontDrive.stopMotor()
+        rearDrive.stopMotor()
+    }
 }

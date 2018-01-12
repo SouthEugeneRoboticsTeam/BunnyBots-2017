@@ -1,43 +1,44 @@
 package org.sert2521.bunnybots.drivetrain
 
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
+import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
-import org.sert2521.bunnybots.util.rightJoystick
-import org.sert2521.bunnybots.util.scaledPitch
-import org.sert2521.bunnybots.util.scaledRoll
-import org.strongback.Strongback
-import org.strongback.command.Command
-import org.strongback.components.Motor
-import org.strongback.hardware.Hardware
-import java.util.function.Supplier
-import org.strongback.drive.TankDrive as Drive
 
-val drive = Drive(
-        Motor.compose(
-                Hardware.Motors.talonSRX(LEFT_FRONT_MOTOR).enableBrakeMode(true),
-                Hardware.Motors.talonSRX(LEFT_REAR_MOTOR).enableBrakeMode(true)
-        ).invert(),
-        Motor.compose(
-                Hardware.Motors.talonSRX(RIGHT_FRONT_MOTOR).enableBrakeMode(true),
-                Hardware.Motors.talonSRX(RIGHT_REAR_MOTOR).enableBrakeMode(true)
-        )
-)
+// I hate CTRE <3
+typealias Talon = WPI_TalonSRX
+
+operator fun Talon.plus(other: Talon): Talon {
+    other.control = ControlMode.Follower
+}
+
+private val frontLeft = Talon(LEFT_FRONT_MOTOR).apply {
+    setNeutralMode(NeutralMode.Brake)
+}
+private val frontRight = Talon(RIGHT_FRONT_MOTOR).apply {
+    setNeutralMode(NeutralMode.Brake)
+}
+private val rearLeft = Talon(LEFT_REAR_MOTOR).apply {
+    setNeutralMode(NeutralMode.Brake)
+}
+private val rearRight = Talon(RIGHT_REAR_MOTOR).apply {
+    setNeutralMode(NeutralMode.Brake)
+}
+
+val frontDrive = DifferentialDrive(frontLeft, frontRight)
+val rearDrive = DifferentialDrive(rearLeft, rearRight)
+
 private val defaultDrive: Command
-    get() = ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
+    get() = ArcadeDrive()
 
 fun initDrivetrain() {
-    Strongback.switchReactor().apply {
-        onTriggeredSubmit(rightJoystick.thumb, Supplier {
-            ArcadeDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledRoll)
-        })
-        onTriggeredSubmit(rightJoystick.thumb, Supplier {
-            TankDrive(drive, rightJoystick.scaledPitch, rightJoystick.scaledPitch)
-        })
-    }
 }
 
 fun addDrivetrainCommands() {
-    Strongback.submit(defaultDrive)
+    defaultDrive.start()
 }
