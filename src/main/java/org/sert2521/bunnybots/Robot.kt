@@ -25,15 +25,16 @@ class Robot : IterativeRobot() {
 //        initArm()
     }
 
-    val points = arrayOf(Waypoint(-4.0, -1.0, Pathfinder.d2r(-45.0)), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            Waypoint(-2.0, -2.0, 0.0), // Waypoint @ x=-2, y=-2, exit angle=0 radians
-            Waypoint(0.0, 0.0, 0.0) // Waypoint @ x=0, y=0,   exit angle=0 radians
+    val points = arrayOf(
+            Waypoint(-4.0, -2.0, Pathfinder.d2r(89.0)),
+            Waypoint(-2.0, -2.0, 0.0),
+            Waypoint(0.0, 0.0, 0.0)
     )
 
-    val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0)
+    val config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.75, 2.0, 60.0)
     val trajectory = Pathfinder.generate(points, config)
 
-    val modifier = TankModifier(trajectory).modify(0.5)
+    val modifier = TankModifier(trajectory).modify(0.86)
 
     val left = EncoderFollower(modifier.leftTrajectory)
     val right = EncoderFollower(modifier.rightTrajectory)
@@ -41,49 +42,71 @@ class Robot : IterativeRobot() {
     val l = Talon(14)
     val r = Talon(10)
 
+    var leftInitial = 0
+    var rightInitial = 0
+
     override fun autonomousInit() {
-        println("Autonomous starting...")
-//        claw.set(DoubleSolenoid.Value.kForward)
-//        addDefaultCommands()
+        left.reset()
+        right.reset()
 
         l.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000)
         r.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000)
 
-        println(l.getSelectedSensorPosition(0))
-        println(r.getSelectedSensorPosition(0))
+        l.setSelectedSensorPosition(0, 0, 10000)
+        r.setSelectedSensorPosition(0, 0, 10000)
 
-        l.setSelectedSensorPosition(0, 0, 1000)
-        r.setSelectedSensorPosition(0, 0, 1000)
+        r.inverted = true
 
-        left.configureEncoder(l.getSelectedSensorPosition(0), 8192, 0.50)
-        left.configurePIDVA(0.001, 0.0, 0.0, 1.0/14.0, 0.0)
+        println(trajectory.segments.contentDeepToString())
+        println(trajectory.segments.size)
 
-        right.configureEncoder(r.getSelectedSensorPosition(0), 1000, 0.5)
-        right.configurePIDVA(0.001, 0.0, 0.0, 1.0/14.0, 0.0)
+        leftInitial = l.getSelectedSensorPosition(0) * -1
+        rightInitial = r.getSelectedSensorPosition(0) * -1
+
+        println(leftInitial)
+        println(rightInitial)
+
+        left.configureEncoder(leftInitial, 8192, 0.15)
+        left.configurePIDVA(0.8, 0.0, 0.0, 1.0/3.75, 0.0)
+
+        right.configureEncoder(rightInitial, 8192, 0.15)
+        right.configurePIDVA(0.8, 0.0, 0.0, 1.0/3.75, 0.0)
     }
 
     override fun autonomousPeriodic() {
-        val leftOut = left.calculate(l.getSelectedSensorPosition(0))
-        val rightOut = right.calculate(r.getSelectedSensorPosition(0)) * -1
+        val leftPosition = l.getSelectedSensorPosition(0) * -1
+        val rightPosition = r.getSelectedSensorPosition(0) * -1
 
-        if (leftOut != 0.0 && rightOut != 0.0) {
-            println(l.getSelectedSensorPosition(0))
-            println(r.getSelectedSensorPosition(0))
-            println(leftOut)
-            println(rightOut)
-        }
+//        println("left: $leftPosition")
+//        println("right: $rightPosition")
 
-        l.set(leftOut)
-        r.set(rightOut)
+//        val leftOut = left.calculate(leftPosition - leftInitial)
+//        val rightOut = right.calculate(rightPosition - rightInitial)
+//
+//        if (left.isFinished) {
+//            l.stopMotor()
+//            r.stopMotor()
+//        } else {
+//            println("left output: $leftOut")
+//            println("right output: $rightOut")
+//            l.set(leftOut)
+//            r.set(rightOut)
+//        }
     }
 
     override fun teleopInit() {
         println("Teleop starting...")
+
+        l.stopMotor()
+        r.stopMotor()
 //        claw.set(DoubleSolenoid.Value.kReverse)
 //        addDefaultCommands()
     }
 
-//    override fun disabledInit() = Strongback.disable()
+    override fun disabledInit() {
+        l.stopMotor()
+        r.stopMotor()
+    }
 
     private fun addDefaultCommands() {
         JoystickButton(Joystick(0), 0).whenActive(object : Command() {
