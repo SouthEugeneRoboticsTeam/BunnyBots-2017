@@ -29,6 +29,7 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'http://first.wpi.edu/FRC/roborio/maven/development' }
     maven { url 'https://raw.githubusercontent.com/Open-RIO/Maven-Mirror/master/m2' }
+    maven { url 'https://github.com/sertain/sertain'}
 }
 
 configurations {
@@ -39,6 +40,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     compile "openrio.mirror.third.ctre:CTRE-phoenix-java:5.1.2.1"
+
+    compile "com.github.sertain:sertain:-SNAPSHOT"
 
     compile wpilib()
     compile navx() {

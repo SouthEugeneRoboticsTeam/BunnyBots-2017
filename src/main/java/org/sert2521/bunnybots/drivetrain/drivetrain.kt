@@ -2,16 +2,13 @@ package org.sert2521.bunnybots.drivetrain
 
 import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
-
-// I hate CTRE <3
-typealias Talon = WPI_TalonSRX
+import org.sertain.hardware.Talon
 
 operator fun Talon.plus(other: Talon): Talon {
     other.set(ControlMode.Follower, deviceID.toDouble())
