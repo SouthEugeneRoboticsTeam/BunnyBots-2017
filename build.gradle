@@ -29,11 +29,11 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'http://first.wpi.edu/FRC/roborio/maven/development' }
     maven { url 'https://raw.githubusercontent.com/Open-RIO/Maven-Mirror/master/m2' }
-    maven { url 'https://github.com/sertain/sertain'}
+    maven { url 'https://github.com/sertain/sertain' }
 }
 
 configurations {
-    ktlint
+ktlint
 }
 
 dependencies {
