@@ -31,7 +31,7 @@ class Robot : IterativeRobot() {
             Waypoint(1.0, 0.5, 0.0)  // Waypoint @ x=0, y=0,   exit angle=0 radians
     )
 
-    var config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.1, 1.7, 1.0, 60.0)
+    var config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.1, 2.356, 1.414, 60.0)
     var trajectory = Pathfinder.generate(points, config)
 
     val modifier = TankModifier(trajectory).modify(0.86)
@@ -58,10 +58,10 @@ class Robot : IterativeRobot() {
         println(trajectory.segments.joinToString<Trajectory.Segment>("\n") { "${it.x}, ${it.y}"})
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 3.7, 0.0)
+        left.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 2.356, 0.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 3.7, 0.0)
+        right.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 2.356, 0.0)
     }
 
     override fun autonomousPeriodic() {
