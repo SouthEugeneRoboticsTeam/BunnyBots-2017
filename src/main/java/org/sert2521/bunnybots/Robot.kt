@@ -9,6 +9,10 @@ import jaci.pathfinder.followers.EncoderFollower
 import jaci.pathfinder.modifiers.TankModifier
 import org.sert2521.bunnybots.drivetrain.Drivetrain
 import kotlin.math.roundToInt
+import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.wpilibj.I2C
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 @Suppress("MemberVisibilityCanPrivate", "HasPlatformType")
 /**
@@ -20,12 +24,12 @@ class Robot : IterativeRobot() {
     }
 
     val points = arrayOf(
-            Waypoint(-4.0, -1.0, Pathfinder.d2r(-45.0)), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            Waypoint(-2.0, -2.0, 0.0), // Waypoint @ x=-2, y=-2, exit angle=0 radians
+            Waypoint(-3.0, -3.0, 0.0), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
+            Waypoint(-2.0, -1.5, Pathfinder.d2r(90.0)), // Waypoint @ x=-2, y=-2, exit angle=0 radians
             Waypoint(0.0, 0.0, 0.0)  // Waypoint @ x=0, y=0,   exit angle=0 radians
     )
 
-    var config = TrajectoryConfig(2.356, 1.414, 60.0)
+    var config = TrajectoryConfig(1.25, 1.414, 60.0)
     var trajectory = config.generate(points)
 
     val modifier = TankModifier(trajectory).modify(0.86)
@@ -33,39 +37,40 @@ class Robot : IterativeRobot() {
     val left = EncoderFollower(modifier.leftTrajectory)
     val right = EncoderFollower(modifier.rightTrajectory)
 
+    val ahrs = AHRS(I2C.Port.kMXP)
+
     override fun autonomousInit() {
         Drivetrain.reset()
         left.reset()
         right.reset()
 
-        println(trajectory.segments.size)
-        println(trajectory.segments.joinToString<Trajectory.Segment>("\n") { it.heading.toString() })
+        ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 2.356, 0.0)
+        left.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 1.25, 0.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 2.356, 0.0)
+        right.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 1.25, 0.0)
     }
 
     override fun autonomousPeriodic() {
         Scheduler.getInstance().run()
 
-        val rearLeftPosition = Drivetrain.rearLeft.getSelectedSensorPosition(0) * -1
-        val rearRightPosition = Drivetrain.rearRight.getSelectedSensorPosition(0) * -1
         val frontLeftPosition = Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
         val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
 
-        val leftOut = left.calculate(listOf(rearLeftPosition, frontLeftPosition).average().roundToInt())
-        val rightOut = left.calculate(listOf(rearRightPosition, frontRightPosition).average().roundToInt())
+        val leftOut = left.calculate(frontLeftPosition)
+        val rightOut = left.calculate(frontRightPosition)
 
         if (left.isFinished) {
             error("")
         } else {
-            println("left output: $leftOut")
-            println("right output: $rightOut")
+            val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
+            val turn = -0.01 * angleDiff
 
-            Drivetrain.tank(.5, .5)
+            println("left output: ${leftOut + turn}")
+            println("right output: ${rightOut - turn}")
+            Drivetrain.tank(leftOut + turn, rightOut - turn)
         }
     }
 
@@ -74,6 +79,13 @@ class Robot : IterativeRobot() {
     }
 
     override fun teleopPeriodic() = Scheduler.getInstance().run()
+
+    override fun disabledInit() {
+        thread {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(5))
+            Drivetrain.setBreakMode(false)
+        }
+    }
 }
 
 @JvmOverloads

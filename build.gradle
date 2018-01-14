@@ -35,10 +35,7 @@ dependencies {
     compile "com.github.sertain:sertain:c0ee82eb69"
 
     compile wpilib()
-    compile navx() {
-        exclude module: 'athena'
-        exclude module: 'wpilibj-java'
-    }
+    compile "openrio.mirror.third.kauailabs:navx-java:3.0.346"
     compile ctre()
     compile "openrio.mirror.third.ctre:CTRE-phoenix-java:5.1.2.1"
     compile pathfinder()

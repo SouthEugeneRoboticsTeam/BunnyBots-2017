@@ -11,7 +11,9 @@ import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sertain.hardware.Talon
 
-fun Talon.autoBreak(): Talon = apply { setNeutralMode(NeutralMode.Brake) }
+fun Talon.autoBreak(enable: Boolean = true): Talon = apply {
+    setNeutralMode(if (enable) NeutralMode.Brake else NeutralMode.Coast)
+}
 
 fun Talon.resetSensor(): Talon = apply {
     configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, Int.MAX_VALUE)
@@ -21,17 +23,24 @@ fun Talon.resetSensor(): Talon = apply {
 fun Talon.inverted(inverted: Boolean = true): Talon = apply { this.inverted = inverted }
 
 object Drivetrain : Subsystem() {
-    val frontLeft = Talon(LEFT_FRONT_MOTOR).autoBreak()
-    val frontRight = Talon(RIGHT_FRONT_MOTOR).autoBreak().inverted()
-    val rearLeft = Talon(LEFT_REAR_MOTOR).autoBreak()
-    val rearRight = Talon(RIGHT_REAR_MOTOR).autoBreak().inverted()
+    val frontLeft = Talon(LEFT_FRONT_MOTOR)
+    val frontRight = Talon(RIGHT_FRONT_MOTOR)
+    val rearLeft = Talon(LEFT_REAR_MOTOR)
+    val rearRight = Talon(RIGHT_REAR_MOTOR)
 
     private val frontDrive = DifferentialDrive(frontLeft, frontRight)
     private val rearDrive = DifferentialDrive(rearLeft, rearRight)
 
+    fun setBreakMode(enable: Boolean) {
+        frontLeft.autoBreak(enable)
+        frontRight.autoBreak(enable)
+        rearLeft.autoBreak(enable)
+        rearRight.autoBreak(enable)
+    }
+
     fun arcade() {
-        frontDrive.arcadeDrive(leftJoystick.x, -leftJoystick.y)
-        rearDrive.arcadeDrive(leftJoystick.x, -leftJoystick.y)
+        frontDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
+        rearDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
     }
 
     fun tank(left: Double, right: Double) {
@@ -46,6 +55,8 @@ object Drivetrain : Subsystem() {
         frontRight.resetSensor()
         rearLeft.resetSensor()
         rearRight.resetSensor()
+
+        setBreakMode(true)
     }
 
     fun stop() {
