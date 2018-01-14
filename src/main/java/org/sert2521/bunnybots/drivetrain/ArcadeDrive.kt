@@ -1,5 +1,6 @@
 package org.sert2521.bunnybots.drivetrain
 
+import edu.wpi.first.wpilibj.DriverStation
 import org.sertain.command.Command
 
 /**
@@ -7,7 +8,7 @@ import org.sertain.command.Command
  */
 class ArcadeDrive : Command() {
     override fun execute(): Boolean {
-        Drivetrain.arcade()
+        if (!DriverStation.getInstance().isAutonomous) Drivetrain.arcade()
         return false
     }
 

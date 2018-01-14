@@ -1,6 +1,5 @@
 package org.sert2521.bunnybots
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import jaci.pathfinder.Pathfinder
@@ -8,9 +7,8 @@ import jaci.pathfinder.Trajectory
 import jaci.pathfinder.Waypoint
 import jaci.pathfinder.followers.EncoderFollower
 import jaci.pathfinder.modifiers.TankModifier
-import org.opencv.core.Point
 import org.sert2521.bunnybots.drivetrain.Drivetrain
-import org.sertain.hardware.Talon
+import kotlin.math.roundToInt
 
 @Suppress("MemberVisibilityCanPrivate", "HasPlatformType")
 /**
@@ -21,41 +19,27 @@ class Robot : IterativeRobot() {
         Drivetrain
     }
 
-    val l = Talon(14)
-    val r = Talon(10)
-
     val points = arrayOf(
             Waypoint(-4.0, -1.0, Pathfinder.d2r(-45.0)), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
             Waypoint(-2.0, -2.0, 0.0), // Waypoint @ x=-2, y=-2, exit angle=0 radians
-            Waypoint(0.0, 0.0, 0.0),  // Waypoint @ x=0, y=0,   exit angle=0 radians
-            Waypoint(1.0, 0.5, 0.0)  // Waypoint @ x=0, y=0,   exit angle=0 radians
+            Waypoint(0.0, 0.0, 0.0)  // Waypoint @ x=0, y=0,   exit angle=0 radians
     )
 
-    var config = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.1, 2.356, 1.414, 60.0)
-    var trajectory = Pathfinder.generate(points, config)
+    var config = TrajectoryConfig(2.356, 1.414, 60.0)
+    var trajectory = config.generate(points)
 
     val modifier = TankModifier(trajectory).modify(0.86)
-
 
     val left = EncoderFollower(modifier.leftTrajectory)
     val right = EncoderFollower(modifier.rightTrajectory)
 
-    val output = mutableListOf<Point>()
-
     override fun autonomousInit() {
+        Drivetrain.reset()
         left.reset()
         right.reset()
 
-        l.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10000)
-        r.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 10000)
-
-        l.setSelectedSensorPosition(0, 0, 10000)
-        r.setSelectedSensorPosition(0, 0, 10000)
-
-        r.inverted = true
-
         println(trajectory.segments.size)
-        println(trajectory.segments.joinToString<Trajectory.Segment>("\n") { "${it.x}, ${it.y}"})
+        println(trajectory.segments.joinToString<Trajectory.Segment>("\n") { it.heading.toString() })
 
         left.configureEncoder(0, 8192, 0.15)
         left.configurePIDVA(0.8, 0.0, 0.0, 1.0 / 2.356, 0.0)
@@ -67,30 +51,46 @@ class Robot : IterativeRobot() {
     override fun autonomousPeriodic() {
         Scheduler.getInstance().run()
 
-        val leftPosition = l.getSelectedSensorPosition(0) * -1
-        val rightPosition = r.getSelectedSensorPosition(0) * -1
+        val rearLeftPosition = Drivetrain.rearLeft.getSelectedSensorPosition(0) * -1
+        val rearRightPosition = Drivetrain.rearRight.getSelectedSensorPosition(0) * -1
+        val frontLeftPosition = Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
+        val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
 
-        println("left: $leftPosition")
-        println("right: $rightPosition")
-
-        val leftOut = left.calculate(leftPosition)
-        val rightOut = right.calculate(rightPosition)
+        val leftOut = left.calculate(listOf(rearLeftPosition, frontLeftPosition).average().roundToInt())
+        val rightOut = left.calculate(listOf(rearRightPosition, frontRightPosition).average().roundToInt())
 
         if (left.isFinished) {
-            l.stopMotor()
-            r.stopMotor()
-            val a = output.filterIndexed { index, _ -> index % 2 == 0 }
-            println(a.mapIndexed { i, p -> Point(i.toDouble(), p.x) }.joinToString("\n") { "${it.x}, ${it.y}"})
-            println(a.mapIndexed { i, p -> Point(i.toDouble(), p.y) }.joinToString("\n") { "${it.x}, ${it.y}"})
             error("")
         } else {
             println("left output: $leftOut")
             println("right output: $rightOut")
-            output += Point(leftOut, rightOut)
-            l.set(leftOut)
-            r.set(rightOut)
+
+            Drivetrain.tank(.5, .5)
         }
+    }
+
+    override fun teleopInit() {
+        Drivetrain.reset()
     }
 
     override fun teleopPeriodic() = Scheduler.getInstance().run()
 }
+
+@JvmOverloads
+fun TrajectoryConfig(
+        maxVelocity: Double,
+        maxAccel: Double,
+        maxJerk: Double,
+        fit: Trajectory.FitMethod = Trajectory.FitMethod.HERMITE_CUBIC,
+        samples: Int = Trajectory.Config.SAMPLES_HIGH,
+        dt: Double = 0.05
+): Trajectory.Config = Trajectory.Config(
+        fit,
+        samples,
+        dt,
+        maxVelocity,
+        maxAccel,
+        maxJerk
+)
+
+fun Trajectory.Config.generate(points: Array<out Waypoint>): Trajectory = Pathfinder.generate(points, this)
