@@ -1,21 +1,17 @@
 package org.sert2521.bunnybots.drivetrain
 
-import edu.wpi.first.wpilibj.command.Command
-import org.sert2521.bunnybots.util.leftJoystick
+import org.sertain.command.Command
 
 /**
  * This command allows for arcade drive of the robot.
  */
 class ArcadeDrive : Command() {
-    override fun isFinished(): Boolean = false
-
-    override fun execute() {
-        frontDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
-        rearDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
+    override fun execute(): Boolean {
+        Drivetrain.arcade()
+        return false
     }
 
-    override fun end() {
-        frontDrive.stopMotor()
-        rearDrive.stopMotor()
+    override fun onDestroy() {
+        Drivetrain.stop()
     }
 }

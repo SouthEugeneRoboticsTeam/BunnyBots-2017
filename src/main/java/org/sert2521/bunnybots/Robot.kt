@@ -2,12 +2,14 @@ package org.sert2521.bunnybots
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice
 import edu.wpi.first.wpilibj.IterativeRobot
+import edu.wpi.first.wpilibj.command.Scheduler
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.Waypoint
 import jaci.pathfinder.followers.EncoderFollower
 import jaci.pathfinder.modifiers.TankModifier
 import org.opencv.core.Point
+import org.sert2521.bunnybots.drivetrain.Drivetrain
 import org.sertain.hardware.Talon
 
 @Suppress("MemberVisibilityCanPrivate", "HasPlatformType")
@@ -16,10 +18,7 @@ import org.sertain.hardware.Talon
  */
 class Robot : IterativeRobot() {
     override fun robotInit() {
-        println("Robot starting...")
-//        initDrivetrain()
-//        initClaw()
-//        initArm()
+        Drivetrain
     }
 
     val l = Talon(14)
@@ -66,6 +65,8 @@ class Robot : IterativeRobot() {
     }
 
     override fun autonomousPeriodic() {
+        Scheduler.getInstance().run()
+
         val leftPosition = l.getSelectedSensorPosition(0) * -1
         val rightPosition = r.getSelectedSensorPosition(0) * -1
 
@@ -91,8 +92,5 @@ class Robot : IterativeRobot() {
         }
     }
 
-    override fun disabledInit() {
-        l.stopMotor()
-        r.stopMotor()
-    }
+    override fun teleopPeriodic() = Scheduler.getInstance().run()
 }

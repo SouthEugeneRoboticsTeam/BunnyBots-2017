@@ -47,7 +47,6 @@ fun addArmCommands() {
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-
 }
 
 fun setArmSpeed(speed: Double) {
