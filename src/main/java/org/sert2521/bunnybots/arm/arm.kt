@@ -1,5 +1,6 @@
 package org.sert2521.bunnybots.arm
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import org.sert2521.bunnybots.util.LEFT_ARM_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_ARM_MOTOR
 import org.sert2521.bunnybots.util.frontSwitch
@@ -17,6 +18,9 @@ fun initArm() {
         Move(leftArmTalon)
         defaultCommand
     }
+
+    leftArmTalon
+    leftArmTalon.set(ControlMode.Position, 2000.0)
 
     if (tossSwitch.get()) {
         Toss(leftArmTalon)
@@ -43,7 +47,6 @@ fun addArmCommands() {
 
 fun setArmAngle(angle: Double) {
     // 1409..-1171 to 3931..1350
-
 }
 
 fun setArmSpeed(speed: Double) {
