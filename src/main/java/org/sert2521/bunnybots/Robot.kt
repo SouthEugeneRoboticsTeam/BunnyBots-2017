@@ -15,7 +15,6 @@ import java.util.Timer
 import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
-import kotlin.math.PI
 
 @Suppress("MemberVisibilityCanPrivate", "HasPlatformType")
 /**
@@ -53,10 +52,10 @@ class Robot : IterativeRobot() {
         ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.8, 0.0, 0.0, 2.2, 0.0)
+        left.configurePIDVA(0.8, 0.0, 0.0, 1 / 1.414, 0.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.8, 0.0, 0.0, 2.2, 0.0)
+        right.configurePIDVA(0.8, 0.0, 0.0, 1 / 1.414, 0.0)
 
         println(trajectory.segments.map { Point(it.x, it.y) }
                 .filterIndexed { i, _ -> i % 2 == 0 }
@@ -68,22 +67,21 @@ class Robot : IterativeRobot() {
     override fun autonomousPeriodic() {
         Scheduler.getInstance().run()
 
+        val frontLeftPosition = Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
+        val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
 
-//        val frontLeftPosition = Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
-//        val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
-//
-//        val leftOut = left.calculate(frontLeftPosition)
-//        val rightOut = right.calculate(frontRightPosition)
-//
-//        if (left.isFinished) {
-//            error("")
-//        } else {
-//            val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
-//            val turn = 0.01 * angleDiff
-//
-//            println("angle: $turn, left output: ${leftOut - turn}, right output: ${rightOut + turn}")
-//            Drivetrain.tank(leftOut - turn, rightOut + turn)
-//        }
+        val leftOut = left.calculate(frontLeftPosition)
+        val rightOut = right.calculate(frontRightPosition)
+
+        if (left.isFinished) {
+            error("")
+        } else {
+            val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
+            val turn = 0.01 * angleDiff
+
+            println("angle: $turn, left output: ${leftOut - turn}, right output: ${rightOut + turn}")
+            Drivetrain.tank(leftOut - turn, rightOut + turn)
+        }
     }
 
     override fun teleopInit() {
@@ -91,21 +89,9 @@ class Robot : IterativeRobot() {
         breakModeUpdateTask?.cancel()
     }
 
-    val positions = mutableListOf<Int>()
-
-    override fun teleopPeriodic() {
-        Scheduler.getInstance().run()
-
-        positions += Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
-    }
+    override fun teleopPeriodic() = Scheduler.getInstance().run()
 
     override fun disabledInit() {
-        if (positions.isNotEmpty()) {
-            println(positions)
-            val foo = positions.takeLast(50)
-            println(((foo.last() - foo.first()) / 8192) * (0.15 * PI))
-        }
-
         breakModeUpdateTask = Timer().schedule(TimeUnit.SECONDS.toMillis(5)) {
             Drivetrain.setBreakMode(false)
         }
