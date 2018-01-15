@@ -52,11 +52,12 @@ class Robot : IterativeRobot() {
         ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.8, 0.0, 0.0, 1 / 1.414, 0.0)
+        left.configurePIDVA(0.01, 0.0, 0.0, 1 / 1.414, 0.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.8, 0.0, 0.0, 1 / 1.414, 0.0)
+        right.configurePIDVA(0.01, 0.0, 0.0, 1 / 1.414, 0.0)
 
+        println(trajectory.segments.size)
         println(trajectory.segments.map { Point(it.x, it.y) }
                 .filterIndexed { i, _ -> i % 2 == 0 }
                 .filterIndexed { i, _ -> i % 2 == 0 }
@@ -77,8 +78,9 @@ class Robot : IterativeRobot() {
             error("")
         } else {
             val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
-            val turn = 0.01 * angleDiff
+            val turn = 0.004 * angleDiff
 
+            println("left: $leftOut, right: $rightOut")
             println("angle: $turn, left output: ${leftOut - turn}, right output: ${rightOut + turn}")
             Drivetrain.tank(leftOut - turn, rightOut + turn)
         }
