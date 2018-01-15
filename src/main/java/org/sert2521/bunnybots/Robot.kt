@@ -9,7 +9,6 @@ import jaci.pathfinder.Trajectory
 import jaci.pathfinder.Waypoint
 import jaci.pathfinder.followers.EncoderFollower
 import jaci.pathfinder.modifiers.TankModifier
-import org.opencv.core.Point
 import org.sert2521.bunnybots.drivetrain.Drivetrain
 import java.util.Timer
 import java.util.TimerTask
@@ -27,14 +26,13 @@ class Robot : IterativeRobot() {
         Drivetrain
     }
 
-    val points = arrayOf(
-            Waypoint(-4.0, 3.0, 0.0),
-            Waypoint(-0.5, 3.0, Pathfinder.d2r(-45.0)),
-            Waypoint(0.0, 0.0, Pathfinder.d2r(-90.0))
-    )
-
     var config = TrajectoryConfig(MAX_VELOCITY, 0.1, 60.0)
-    var trajectory = config.generate(points)
+    var trajectory = config.generate(arrayOf(
+            Waypoint(0.0, 0.0, 0.0),
+            Waypoint(3.5, 0.0, Pathfinder.d2r(-45.0)),
+            Waypoint(7.17, -2.17, 0.0),
+            Waypoint(5.17, -2.17, 0.0)
+    ))
 
     val modifier = TankModifier(trajectory).modify(0.86)
 
@@ -52,17 +50,13 @@ class Robot : IterativeRobot() {
         ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.885)
+        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.885)
+        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
 
         println(trajectory.segments.size)
-        println(trajectory.segments.map { Point(it.x, it.y) }
-                .filterIndexed { i, _ -> i % 2 == 0 }
-                .filterIndexed { i, _ -> i % 2 == 0 }
-                .filterIndexed { i, _ -> i % 2 == 0 }
-                .joinToString("\n") { "${it.x}, ${it.y}" })
+        println(trajectory.segments.reduce(50).joinToString("\n") { "${it.x}, ${it.y}" })
     }
 
     override fun autonomousPeriodic() {
@@ -101,7 +95,7 @@ class Robot : IterativeRobot() {
     }
 
     companion object {
-        private const val MAX_VELOCITY = 1.52521
+        private const val MAX_VELOCITY = 1.51
     }
 }
 
@@ -124,3 +118,9 @@ fun TrajectoryConfig(
 
 fun Trajectory.Config.generate(points: Array<out Waypoint>): Trajectory =
         Pathfinder.generate(points, this)
+
+fun Array<Trajectory.Segment>.reduce(n: Int): List<Trajectory.Segment> {
+    var result = toList()
+    while (result.size > n) result = result.filterIndexed { i, _ -> i % 2 == 0 }
+    return result
+}
