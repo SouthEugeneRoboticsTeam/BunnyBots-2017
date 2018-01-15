@@ -30,11 +30,6 @@ object Drivetrain : Subsystem() {
 
     private val drive = DifferentialDrive(frontLeft, frontRight)
 
-    init {
-        rearLeft.follow(frontLeft)
-        rearRight.follow(frontRight)
-    }
-
     fun setBreakMode(enable: Boolean) {
         frontLeft.autoBreak(enable)
         frontRight.autoBreak(enable)
@@ -53,6 +48,8 @@ object Drivetrain : Subsystem() {
 
         frontLeft.resetSensor()
         frontRight.resetSensor()
+        rearLeft.follow(frontLeft)
+        rearRight.follow(frontRight)
 
         setBreakMode(true)
     }
