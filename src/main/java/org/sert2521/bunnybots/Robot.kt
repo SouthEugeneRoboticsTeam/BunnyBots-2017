@@ -33,7 +33,7 @@ class Robot : IterativeRobot() {
             Waypoint(0.0, 0.0, Pathfinder.d2r(-90.0))
     )
 
-    var config = TrajectoryConfig(MAX_VELOCITY, 1.885, 60.0)
+    var config = TrajectoryConfig(MAX_VELOCITY, 0.1, 60.0)
     var trajectory = config.generate(points)
 
     val modifier = TankModifier(trajectory).modify(0.86)
@@ -52,10 +52,10 @@ class Robot : IterativeRobot() {
         ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.02, 0.0, 0.0, 1 / MAX_VELOCITY, 0.0)
+        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.885)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.02, 0.0, 0.0, 1 / MAX_VELOCITY, 0.0)
+        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.885)
 
         println(trajectory.segments.size)
         println(trajectory.segments.map { Point(it.x, it.y) }
@@ -79,9 +79,9 @@ class Robot : IterativeRobot() {
         } else {
             val angleDiff =
                     Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
-            val turn = 0.004 * angleDiff
+            val turn = 0.0001 * angleDiff
 
-            println("left: $leftOut, right: $rightOut, angle: $turn, left output: ${leftOut - turn}," +
+            println("left: $leftOut, right: $rightOut, turn: $turn, left output: ${leftOut - turn}," +
                     " right output: ${rightOut + turn}")
             Drivetrain.tank(leftOut - turn, rightOut + turn)
         }
@@ -101,7 +101,7 @@ class Robot : IterativeRobot() {
     }
 
     companion object {
-        private const val MAX_VELOCITY = 1.414
+        private const val MAX_VELOCITY = 1.52521
     }
 }
 
