@@ -28,9 +28,9 @@ class Robot : IterativeRobot() {
     }
 
     val points = arrayOf(
-            Waypoint(-3.0, 0.0, 0.0),
-            Waypoint(-1.3, 1.8, 0.0),
-            Waypoint(0.0, 0.0, Pathfinder.d2r(-90.0))
+            Waypoint(-3.0, -2.0, 0.0),
+            Waypoint(-0.5, -2.0, Pathfinder.d2r(45.0)),
+            Waypoint(0.0, 0.0, Pathfinder.d2r(90.0))
     )
 
     var config = TrajectoryConfig(1.414, 1.885, 60.0)
@@ -77,7 +77,8 @@ class Robot : IterativeRobot() {
         if (left.isFinished) {
             error("")
         } else {
-            val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
+            val angleDiff =
+                    Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
             val turn = 0.004 * angleDiff
 
             println("left: $leftOut, right: $rightOut")
@@ -117,4 +118,5 @@ fun TrajectoryConfig(
         maxJerk
 )
 
-fun Trajectory.Config.generate(points: Array<out Waypoint>): Trajectory = Pathfinder.generate(points, this)
+fun Trajectory.Config.generate(points: Array<out Waypoint>): Trajectory =
+        Pathfinder.generate(points, this)
