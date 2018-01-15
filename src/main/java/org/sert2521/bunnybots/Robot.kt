@@ -23,9 +23,9 @@ class Robot : IterativeRobot() {
     }
 
     val points = arrayOf(
-            Waypoint(-4.0, -1.0, Pathfinder.d2r(-45.0)), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            Waypoint(-2.0, -2.0, 0.0), // Waypoint @ x=-2, y=-2, exit angle=0 radians
-            Waypoint(0.0, 0.0, 0.0) // Waypoint @ x=0, y=0,   exit angle=0 radians
+            Waypoint(-3.0, 0.0, 0.0),
+            Waypoint(-1.3, 1.8, 0.0),
+            Waypoint(0.0, 0.0, Pathfinder.d2r(-90.0))
     )
 
     var config = TrajectoryConfig(1.25, 1.414, 60.0)
@@ -59,7 +59,7 @@ class Robot : IterativeRobot() {
         val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
 
         val leftOut = left.calculate(frontLeftPosition)
-        val rightOut = left.calculate(frontRightPosition)
+        val rightOut = right.calculate(frontRightPosition)
 
         if (left.isFinished) {
             error("")
@@ -67,9 +67,7 @@ class Robot : IterativeRobot() {
             val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
             val turn = 0.01 * angleDiff
 
-            println("angle: " + turn)
-            println("left output: ${leftOut - turn}")
-            println("right output: ${rightOut + turn}")
+            println("angle: $turn, left output: ${leftOut - turn}, right output: ${rightOut + turn}")
             Drivetrain.tank(leftOut - turn, rightOut + turn)
         }
     }
