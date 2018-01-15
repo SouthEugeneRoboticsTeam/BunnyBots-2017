@@ -24,9 +24,9 @@ fun Talon.inverted(inverted: Boolean = true): Talon = apply { this.inverted = in
 
 object Drivetrain : Subsystem() {
     val frontLeft = Talon(LEFT_FRONT_MOTOR)
-    val frontRight = Talon(RIGHT_FRONT_MOTOR)
-    private val rearLeft = Talon(LEFT_REAR_MOTOR)
-    private val rearRight = Talon(RIGHT_REAR_MOTOR)
+    val frontRight = Talon(RIGHT_FRONT_MOTOR).inverted()
+    val rearLeft = Talon(LEFT_REAR_MOTOR)
+    val rearRight = Talon(RIGHT_REAR_MOTOR).inverted()
 
     private val drive = DifferentialDrive(frontLeft, frontRight)
 
@@ -36,11 +36,11 @@ object Drivetrain : Subsystem() {
     }
 
     fun arcade() {
-        drive.arcadeDrive(-leftJoystick.y, leftJoystick.x)
+        drive.arcadeDrive(leftJoystick.x, -leftJoystick.y)
     }
 
     fun tank(left: Double, right: Double) {
-        drive.tankDrive(left, right)
+        drive.tankDrive(left, -right)
     }
 
     fun reset() {

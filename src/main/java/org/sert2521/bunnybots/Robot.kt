@@ -28,12 +28,12 @@ class Robot : IterativeRobot() {
     }
 
     val points = arrayOf(
-            Waypoint(-3.0, -2.0, 0.0),
-            Waypoint(-0.5, -2.0, Pathfinder.d2r(45.0)),
-            Waypoint(0.0, 0.0, Pathfinder.d2r(90.0))
+            Waypoint(-4.0, 3.0, 0.0),
+            Waypoint(-0.5, 3.0, Pathfinder.d2r(-45.0)),
+            Waypoint(0.0, 0.0, Pathfinder.d2r(-90.0))
     )
 
-    var config = TrajectoryConfig(1.414, 1.885, 60.0)
+    var config = TrajectoryConfig(MAX_VELOCITY, 1.885, 60.0)
     var trajectory = config.generate(points)
 
     val modifier = TankModifier(trajectory).modify(0.86)
@@ -52,10 +52,10 @@ class Robot : IterativeRobot() {
         ahrs.reset()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(0.01, 0.0, 0.0, 1 / 1.414, 0.0)
+        left.configurePIDVA(0.02, 0.0, 0.0, 1 / MAX_VELOCITY, 0.0)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(0.01, 0.0, 0.0, 1 / 1.414, 0.0)
+        right.configurePIDVA(0.02, 0.0, 0.0, 1 / MAX_VELOCITY, 0.0)
 
         println(trajectory.segments.size)
         println(trajectory.segments.map { Point(it.x, it.y) }
@@ -75,14 +75,14 @@ class Robot : IterativeRobot() {
         val rightOut = right.calculate(frontRightPosition)
 
         if (left.isFinished) {
-            error("")
+            Drivetrain.tank(0.0, 0.0)
         } else {
             val angleDiff =
                     Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
             val turn = 0.004 * angleDiff
 
-            println("left: $leftOut, right: $rightOut")
-            println("angle: $turn, left output: ${leftOut - turn}, right output: ${rightOut + turn}")
+            println("left: $leftOut, right: $rightOut, angle: $turn, left output: ${leftOut - turn}," +
+                    " right output: ${rightOut + turn}")
             Drivetrain.tank(leftOut - turn, rightOut + turn)
         }
     }
@@ -98,6 +98,10 @@ class Robot : IterativeRobot() {
         breakModeUpdateTask = Timer().schedule(TimeUnit.SECONDS.toMillis(5)) {
             Drivetrain.setBreakMode(false)
         }
+    }
+
+    companion object {
+        private const val MAX_VELOCITY = 1.414
     }
 }
 
