@@ -25,27 +25,27 @@ fun Talon.inverted(inverted: Boolean = true): Talon = apply { this.inverted = in
 object Drivetrain : Subsystem() {
     val frontLeft = Talon(LEFT_FRONT_MOTOR)
     val frontRight = Talon(RIGHT_FRONT_MOTOR)
-    val rearLeft = Talon(LEFT_REAR_MOTOR)
-    val rearRight = Talon(RIGHT_REAR_MOTOR)
+    private val rearLeft = Talon(LEFT_REAR_MOTOR)
+    private val rearRight = Talon(RIGHT_REAR_MOTOR)
 
-    private val frontDrive = DifferentialDrive(frontLeft, frontRight)
-    private val rearDrive = DifferentialDrive(rearLeft, rearRight)
+    private val drive = DifferentialDrive(frontLeft, frontRight)
+
+    init {
+        rearLeft.follow(frontLeft)
+        rearRight.follow(frontRight)
+    }
 
     fun setBreakMode(enable: Boolean) {
         frontLeft.autoBreak(enable)
         frontRight.autoBreak(enable)
-        rearLeft.autoBreak(enable)
-        rearRight.autoBreak(enable)
     }
 
     fun arcade() {
-        frontDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
-        rearDrive.arcadeDrive(leftJoystick.x, leftJoystick.y)
+        drive.arcadeDrive(-leftJoystick.y, leftJoystick.x)
     }
 
     fun tank(left: Double, right: Double) {
-        frontDrive.tankDrive(left, right)
-        rearDrive.tankDrive(left, right)
+        drive.tankDrive(left, right)
     }
 
     fun reset() {
@@ -53,15 +53,12 @@ object Drivetrain : Subsystem() {
 
         frontLeft.resetSensor()
         frontRight.resetSensor()
-        rearLeft.resetSensor()
-        rearRight.resetSensor()
 
         setBreakMode(true)
     }
 
     fun stop() {
-        frontDrive.stopMotor()
-        rearDrive.stopMotor()
+        drive.stopMotor()
     }
 
     override fun initDefaultCommand() {

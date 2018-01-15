@@ -1,5 +1,7 @@
 package org.sert2521.bunnybots
 
+import com.kauailabs.navx.frc.AHRS
+import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.IterativeRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import jaci.pathfinder.Pathfinder
@@ -8,9 +10,6 @@ import jaci.pathfinder.Waypoint
 import jaci.pathfinder.followers.EncoderFollower
 import jaci.pathfinder.modifiers.TankModifier
 import org.sert2521.bunnybots.drivetrain.Drivetrain
-import kotlin.math.roundToInt
-import com.kauailabs.navx.frc.AHRS
-import edu.wpi.first.wpilibj.I2C
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
@@ -24,9 +23,9 @@ class Robot : IterativeRobot() {
     }
 
     val points = arrayOf(
-            Waypoint(-3.0, -3.0, 0.0), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            Waypoint(-2.0, -1.5, Pathfinder.d2r(90.0)), // Waypoint @ x=-2, y=-2, exit angle=0 radians
-            Waypoint(0.0, 0.0, 0.0)  // Waypoint @ x=0, y=0,   exit angle=0 radians
+            Waypoint(-4.0, -1.0, Pathfinder.d2r(-45.0)), // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
+            Waypoint(-2.0, -2.0, 0.0), // Waypoint @ x=-2, y=-2, exit angle=0 radians
+            Waypoint(0.0, 0.0, 0.0) // Waypoint @ x=0, y=0,   exit angle=0 radians
     )
 
     var config = TrajectoryConfig(1.25, 1.414, 60.0)
@@ -66,11 +65,12 @@ class Robot : IterativeRobot() {
             error("")
         } else {
             val angleDiff = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
-            val turn = -0.01 * angleDiff
+            val turn = 0.01 * angleDiff
 
-            println("left output: ${leftOut + turn}")
-            println("right output: ${rightOut - turn}")
-            Drivetrain.tank(leftOut + turn, rightOut - turn)
+            println("angle: " + turn)
+            println("left output: ${leftOut - turn}")
+            println("right output: ${rightOut + turn}")
+            Drivetrain.tank(leftOut - turn, rightOut + turn)
         }
     }
 
