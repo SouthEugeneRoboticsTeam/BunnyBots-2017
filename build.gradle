@@ -32,7 +32,7 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    compile "com.github.sertain:sertain:c0ee82eb69"
+    compile "org.sert2521.sertain:core:2379fd3895"
 
     compile wpilib()
     compile "openrio.mirror.third.kauailabs:navx-java:3.0.346"
@@ -82,7 +82,7 @@ deploy {
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest('org.sert2521.bunnybots.Robot')
+    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest('org.sert2521.bunnybots.Alluminati')
 }
 
 task ktlint(type: JavaExec) {
