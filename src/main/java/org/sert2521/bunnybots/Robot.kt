@@ -24,39 +24,19 @@ class Robot : IterativeRobot() {
 
     override fun robotInit() {
         Drivetrain
+        Slalom
     }
-
-    var config = TrajectoryConfig(MAX_VELOCITY, 0.1, 60.0)
-    var trajectory = config.generate(arrayOf(
-            Waypoint(0.0, 0.0, 0.0),
-            Waypoint(3.5, 0.0, Pathfinder.d2r(-45.0)),
-            Waypoint(7.17, -2.17, 0.0),
-            Waypoint(5.17, -2.17, 0.0)
-    ))
-
-    val modifier = TankModifier(trajectory).modify(0.86)
-
-    val left = EncoderFollower(modifier.leftTrajectory)
-    val right = EncoderFollower(modifier.rightTrajectory)
 
     val ahrs = AHRS(I2C.Port.kMXP)
 
     override fun autonomousInit() {
         Drivetrain.reset()
         breakModeUpdateTask?.cancel()
-        left.reset()
-        right.reset()
+
+        Slalom.left.reset()
+        Slalom.right.reset()
 
         ahrs.reset()
-
-        left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
-
-        right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
-
-        println(trajectory.segments.size)
-        println(trajectory.segments.reduce(50).joinToString("\n") { "${it.x}, ${it.y}" })
     }
 
     override fun autonomousPeriodic() {
@@ -65,14 +45,14 @@ class Robot : IterativeRobot() {
         val frontLeftPosition = Drivetrain.frontLeft.getSelectedSensorPosition(0) * -1
         val frontRightPosition = Drivetrain.frontRight.getSelectedSensorPosition(0) * -1
 
-        val leftOut = left.calculate(frontLeftPosition)
-        val rightOut = right.calculate(frontRightPosition)
+        val leftOut = Slalom.left.calculate(frontLeftPosition)
+        val rightOut = Slalom.right.calculate(frontRightPosition)
 
-        if (left.isFinished) {
+        if (Slalom.isFinished) {
             Drivetrain.tank(0.0, 0.0)
         } else {
             val angleDiff =
-                    Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.heading) - ahrs.angle)
+                    Pathfinder.boundHalfDegrees(Pathfinder.r2d(Slalom.heading) - ahrs.angle)
             val turn = 0.0001 * angleDiff
 
             println("left: $leftOut, right: $rightOut, turn: $turn, left output: ${leftOut - turn}," +
@@ -93,12 +73,9 @@ class Robot : IterativeRobot() {
             Drivetrain.setBreakMode(false)
         }
     }
-
-    companion object {
-        private const val MAX_VELOCITY = 1.51
-    }
 }
 
+@Suppress("FunctionName")
 @JvmOverloads
 fun TrajectoryConfig(
         maxVelocity: Double,
@@ -119,8 +96,55 @@ fun TrajectoryConfig(
 fun Trajectory.Config.generate(points: Array<out Waypoint>): Trajectory =
         Pathfinder.generate(points, this)
 
+@Suppress("FunctionName")
+fun TankModifier(source: Trajectory, wheelbaseWidth: Double): TankModifier =
+        TankModifier(source).modify(wheelbaseWidth)
+
+fun TankModifier.split(): Pair<EncoderFollower, EncoderFollower> =
+        EncoderFollower(leftTrajectory) to EncoderFollower(rightTrajectory)
+
 fun Array<Trajectory.Segment>.reduce(n: Int): List<Trajectory.Segment> {
     var result = toList()
     while (result.size > n) result = result.filterIndexed { i, _ -> i % 2 == 0 }
     return result
+}
+
+abstract class PathInitializer {
+    protected abstract val trajectory: Trajectory
+    protected abstract val followers: Pair<EncoderFollower, EncoderFollower>
+
+    val left get() = followers.first
+    val right get() = followers.second
+    val isFinished get() = left.isFinished
+    val heading get() = left.heading
+
+    protected fun logGeneratedPoints() {
+        println("""
+                |Generated ${trajectory.segments.size} points:
+                ${trajectory.segments.reduce(50).joinToString("\n") { "${it.x}, ${it.y}" }}
+                |""".trimMargin())
+    }
+}
+
+object Slalom : PathInitializer() {
+    private const val MAX_VELOCITY = 1.4
+
+    override val trajectory = TrajectoryConfig(MAX_VELOCITY, 0.1, 60.0).generate(arrayOf(
+            Waypoint(0.0, 0.0, 0.0),
+            Waypoint(1.5, 0.0, 0.0),
+            Waypoint(3.0, -2.17, 0.0),
+            Waypoint(4.5, -0.55, 0.0),
+            Waypoint(7.17, -2.17, 0.0)
+    ))
+    override val followers = TankModifier(trajectory, 0.86).split()
+
+    init {
+        logGeneratedPoints()
+
+        left.configureEncoder(0, 8192, 0.15)
+        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
+
+        right.configureEncoder(0, 8192, 0.15)
+        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
+    }
 }
