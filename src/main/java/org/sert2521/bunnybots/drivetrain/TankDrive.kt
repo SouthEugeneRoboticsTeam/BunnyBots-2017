@@ -1,4 +1,4 @@
-package org.sert2521.bunnybots.driving
+package org.sert2521.bunnybots.drivetrain
 
 import org.strongback.command.Command
 import org.strongback.components.ui.ContinuousRange

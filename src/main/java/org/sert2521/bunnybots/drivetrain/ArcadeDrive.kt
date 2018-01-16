@@ -1,5 +1,6 @@
-package org.sert2521.bunnybots.driving
+package org.sert2521.bunnybots.drivetrain
 
+import edu.wpi.first.wpilibj.Preferences
 import org.strongback.command.Command
 import org.strongback.components.ui.ContinuousRange
 import org.strongback.drive.TankDrive
@@ -12,8 +13,10 @@ class ArcadeDrive(
         private val pitch: ContinuousRange,
         private val roll: ContinuousRange
 ) : Command(drive) {
+    private val scaling = Preferences.getInstance().getDouble("scaled_drive_speed", 1.0)
+
     override fun execute(): Boolean {
-        drive.arcade(pitch.read(), roll.read())
+        drive.arcade(pitch.scale(scaling).read(), roll.scale(scaling).read())
         return false
     }
 

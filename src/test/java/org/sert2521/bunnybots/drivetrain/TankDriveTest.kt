@@ -4,7 +4,6 @@ import org.junit.Before
 import org.junit.Test
 import org.sert2521.bunnybots.ContinuousRangeTester
 import org.sert2521.bunnybots.assertMotorSpeeds
-import org.sert2521.bunnybots.driving.TankDrive
 import org.strongback.command.CommandTester
 import org.strongback.components.Motor
 import org.strongback.mock.Mock
@@ -44,11 +43,10 @@ class TankDriveTest {
 
         val tester = CommandTester(TankDrive(drive, leftStick.continuous, rightStick.continuous))
 
-        var speed: Double
-
         // Make sure the motors are not moving when the test begins
 
-        speed = 0.0
+        var speed = 0.0
+
         leftStick.value = speed
         rightStick.value = speed
 
