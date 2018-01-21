@@ -21,6 +21,7 @@ tasks.whenTaskAdded { task ->
 check.dependsOn "ktlint"
 
 repositories {
+    google()
     jcenter()
     maven { url 'https://jitpack.io' }
 }
@@ -32,7 +33,7 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    compile "org.sert2521.sertain:core:2379fd3895"
+    compile "org.sert2521.sertain:core:d9c87c5cef"
 
     compile wpilib()
     compile "openrio.mirror.third.kauailabs:navx-java:3.0.346"

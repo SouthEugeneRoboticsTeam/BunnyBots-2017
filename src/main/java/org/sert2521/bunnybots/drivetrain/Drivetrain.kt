@@ -1,6 +1,5 @@
 package org.sert2521.bunnybots.drivetrain
 
-import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.drive.DifferentialDrive
 import org.sert2521.bunnybots.util.LEFT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.LEFT_REAR_MOTOR
@@ -8,6 +7,7 @@ import org.sert2521.bunnybots.util.RIGHT_FRONT_MOTOR
 import org.sert2521.bunnybots.util.RIGHT_REAR_MOTOR
 import org.sert2521.bunnybots.util.leftJoystick
 import org.sertain.RobotLifecycle
+import org.sertain.command.Subsystem
 import org.sertain.hardware.Talon
 import org.sertain.hardware.autoBreak
 import org.sertain.hardware.inverted
@@ -20,8 +20,9 @@ object Drivetrain : Subsystem(), RobotLifecycle {
 
     private val drive = DifferentialDrive(frontLeft, frontRight)
 
+    override val defaultCommand = ArcadeDrive()
+
     init {
-        RobotLifecycle.addListener(this)
         frontLeft.autoBreak()
         frontRight.autoBreak()
     }
@@ -43,9 +44,5 @@ object Drivetrain : Subsystem(), RobotLifecycle {
 
     fun stop() {
         drive.stopMotor()
-    }
-
-    override fun initDefaultCommand() {
-        ArcadeDrive().start()
     }
 }
