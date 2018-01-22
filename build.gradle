@@ -40,6 +40,7 @@ dependencies {
     compile ctre()
     compile "openrio.mirror.third.ctre:CTRE-phoenix-java:5.1.2.1"
     compile pathfinder()
+    compile openrio.powerup.matchData()
 
     ktlint 'com.github.shyiko:ktlint:0.14.0'
 }

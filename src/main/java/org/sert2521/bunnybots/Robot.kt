@@ -31,6 +31,10 @@ class Alluminati : Robot() {
         ahrs.reset()
     }
 
+    override fun executeDisabled() {
+//        println(DriverStation.getInstance().gameSpecificMessage)
+    }
+
     override fun executeAuto() {
         val frontLeftPosition = Drivetrain.frontLeft.encoderPosition * -1
         val frontRightPosition = Drivetrain.frontRight.encoderPosition * -1
@@ -43,7 +47,7 @@ class Alluminati : Robot() {
         } else {
             val angleDiff =
                     Pathfinder.boundHalfDegrees(Pathfinder.r2d(Slalom.heading) - ahrs.angle)
-            val turn = 0.0001 * angleDiff
+            val turn = 0.00075 * angleDiff
 
             println("left: $leftOut, right: $rightOut, turn: $turn, left output: ${leftOut - turn}," +
                     " right output: ${rightOut + turn}")
@@ -53,12 +57,18 @@ class Alluminati : Robot() {
 }
 
 object Slalom : PathInitializer() {
-    private const val MAX_VELOCITY = 1.4
+    private const val MAX_VELOCITY = 0.35
+    private const val MAX_ACCEL = 0.075
 
-    override val trajectory = TrajectoryConfig(MAX_VELOCITY, 0.1, 60.0).generate(arrayOf(
+    override val trajectory = TrajectoryConfig(MAX_VELOCITY, MAX_ACCEL, 60.0).generate(arrayOf(
             Waypoint(0.0, 0.0, 0.0),
-            Waypoint(3.5, 0.0, Pathfinder.d2r(-45.0)),
-            Waypoint(7.17, -2.17, 0.0)
+//            Waypoint(1.36, -0.3, Pathfinder.d2r(30.0)),
+            Waypoint(0.5, 0.0, 0.0),
+            Waypoint(2.72 * 3/4 + 0.2, 0.5, 0.0),
+            Waypoint(3.02, -0.87, Pathfinder.d2r(90.0))
+//            Waypoint(2.72, 0.0, 0.0),
+//            Waypoint(2.82, 0.87, Pathfinder.d2r(-90.0))
+
     ))
     override val followers = TankModifier(trajectory, 0.86).split()
 
@@ -66,9 +76,9 @@ object Slalom : PathInitializer() {
         logGeneratedPoints()
 
         left.configureEncoder(0, 8192, 0.15)
-        left.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
+        left.configurePIDVA(2.75, 0.0, 0.25, 1 / MAX_VELOCITY, 0.5)
 
         right.configureEncoder(0, 8192, 0.15)
-        right.configurePIDVA(2.75, 0.0, 0.125, 1 / MAX_VELOCITY, 1.0)
+        right.configurePIDVA(2.75, 0.0, 0.25, 1 / MAX_VELOCITY, 0.5)
     }
 }
