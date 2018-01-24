@@ -31,10 +31,6 @@ class Alluminati : Robot() {
         ahrs.reset()
     }
 
-    override fun executeDisabled() {
-//        println(DriverStation.getInstance().gameSpecificMessage)
-    }
-
     override fun executeAuto() {
         val frontLeftPosition = Drivetrain.frontLeft.encoderPosition * -1
         val frontRightPosition = Drivetrain.frontRight.encoderPosition * -1
