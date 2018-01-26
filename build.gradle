@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = "1.2.10"
+    ext.kotlin_version = "1.2.21"
 
     repositories {
         jcenter()
@@ -33,7 +33,7 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    compile "org.sert2521.sertain:core:d9c87c5cef"
+    compile "org.sert2521.sertain:core:7f28633658"
 
     compile wpilib()
     compile "openrio.mirror.third.kauailabs:navx-java:3.0.346"

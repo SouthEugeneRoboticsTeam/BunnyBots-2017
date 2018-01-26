@@ -3,15 +3,16 @@ package org.sert2521.bunnybots
 import com.kauailabs.navx.frc.AHRS
 import edu.wpi.first.wpilibj.I2C
 import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Waypoint
 import org.sert2521.bunnybots.drivetrain.Drivetrain
 import org.sertain.Robot
 import org.sertain.hardware.encoderPosition
 import org.sertain.util.PathInitializer
 import org.sertain.util.TankModifier
 import org.sertain.util.TrajectoryConfig
+import org.sertain.util.angle
 import org.sertain.util.generate
 import org.sertain.util.split
+import org.sertain.util.with
 
 /**
  * This is the main robot class which calls various methods depending on the current game stage.
@@ -57,9 +58,8 @@ object Slalom : PathInitializer() {
     private const val MAX_ACCEL = 0.075
 
     override val trajectory = TrajectoryConfig(MAX_VELOCITY, MAX_ACCEL, 60.0).generate(arrayOf(
-            Waypoint(0.0, 0.0, 0.0),
-            Waypoint(2.86, -1.1, 0.0)
-
+            0.0 with 0.0 angle 0.0,
+            2.86 with -1.1 angle 0.0
     ))
     override val followers = TankModifier(trajectory, 0.86).split()
 
