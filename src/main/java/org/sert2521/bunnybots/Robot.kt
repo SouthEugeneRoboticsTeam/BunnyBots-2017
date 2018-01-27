@@ -59,7 +59,8 @@ object Slalom : PathInitializer() {
 
     override val trajectory = TrajectoryConfig(MAX_VELOCITY, MAX_ACCEL, 60.0).generate(arrayOf(
             0.0 with 0.0 angle 0.0,
-            2.86 with -1.1 angle 0.0
+            3.5 with 0.0 angle -45.0,
+            7.17 with -2.17 angle 0.0
     ))
     override val followers = TankModifier(trajectory, 0.86).split()
 
